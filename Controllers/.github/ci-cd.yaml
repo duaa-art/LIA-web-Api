@@ -1,0 +1,31 @@
+name : CI/CD Pipeline
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - develop
+      jobs:
+      runs-on: ubuntu-latest
+      steps:
+      -name: Checkout code
+       uses: actions/checkout@v3
+       -name: Setup dotnet
+       uses: actions/setup-dotnet@v3
+       with:
+        dotnet-version: '7.0.x'
+
+        -name: Build project
+        run: dotnet restore; dotnet publish -o site;
+
+        -name: create xip package
+        run: cd site; zip ../site.zip *;
+
+        deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
